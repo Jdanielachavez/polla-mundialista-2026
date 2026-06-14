@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Polla Mundialista 2026 ⚽ Crea tu grupo y haz tus predicciones del Mundial</title>
+<meta name="description" content="Crea tu polla mundialista para el Mundial FIFA 2026. Pronostica campeón, goleador y resultados. Invita a tu familia, amigos o compañeros. Gratis, fácil y en tiempo real.">
+<meta name="keywords" content="polla mundialista, mundial 2026, quiniela, predicciones, FIFA World Cup 2026, pronósticos fútbol, polla deportiva, apuestas mundial">
+<meta name="author" content="Daniel Chávez">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://pollamundialista-ecuador2026.netlify.app/">
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pollamundialista-ecuador2026.netlify.app/">
+<meta property="og:title" content="Polla Mundialista 2026 ⚽ Crea tu grupo y pronostica">
+<meta property="og:description" content="Arma tu polla del Mundial FIFA 2026 con familia o amigos. Pronostica campeón, goleador y más. Resultados en tiempo real.">
+<meta property="og:image" content="https://pollamundialista-ecuador2026.netlify.app/fifa2026.png">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Polla Mundialista 2026 ⚽">
+<meta name="twitter:description" content="Crea tu polla del Mundial 2026. Pronostica campeón, goleador y resultados con tu familia o amigos.">
+<meta name="twitter:image" content="https://pollamundialista-ecuador2026.netlify.app/fifa2026.png">
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+<!--
+  ╔══════════════════════════════════════════════════╗
+  ║   INSTRUCCIONES DE CONFIGURACIÓN (LEE ESTO)      ║
+  ╠══════════════════════════════════════════════════╣
+  ║                                                  ║
+  ║  PASO 1 — Firebase (para compartir en familia):  ║
+  ║  1. Ve a console.firebase.google.com             ║
+  ║  2. "Agregar proyecto" → cualquier nombre        ║
+  ║  3. Build → Realtime Database → Crear            ║
+  ║     → Selecciona "modo de prueba"                ║
+  ║  4. Configuración del proyecto → "Tu app"        ║
+  ║     → Registrar app web → copia la config        ║
+  ║  5. Pega los valores en FIREBASE_CONFIG abajo    ║
+  ║                                                  ║
+  ║  PASO 2 — API de fútbol (resultados automáticos):║
+  ║  1. Ve a rapidapi.com → busca "API-Football"     ║
+  ║  2. Suscríbete al plan FREE (100 llamadas/día)   ║
+  ║  3. Tu API key ya está incluida abajo            ║
+  ║                                                  ║
+  ║  PASO 3 — Publicar en internet (2 minutos):      ║
+  ║  1. Ve a netlify.com → crea cuenta gratis        ║
+  ║  2. Arrastra esta carpeta "PAGINA WEB" al sitio  ║
+  ║  3. Comparte el link con la familia ✓            ║
+  ╚══════════════════════════════════════════════════╝
+-->
+<!-- JSON-LD Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Polla Mundialista 2026",
+  "url": "https://pollamundialista-ecuador2026.netlify.app/",
+  "description": "Crea tu polla mundialista para el Mundial FIFA 2026. Pronostica campeón, goleador y resultados con tu familia o amigos.",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "3",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Chávez"
+  }
+}
+</script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08081a;--card:#12122a;--card2:#1c1c3a;
+  --red:#e53935;--gold:#ffd700;--gold2:#ffaa00;
+  --green:#27ae60;--danger:#e74c3c;
+  --text:#ffffff;--muted:#7777aa;--border:#252550;
+}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif;font-size:17px;min-height:100vh}
+.header{background:linear-gradient(160deg,#0a0a1c 0%,#1a000a 100%);border-bottom:3px solid var(--red);padding:16px 18px}
+.header-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.medallion{width:72px;height:72px;border-radius:50%;border:3px solid var(--gold);overflow:hidden;flex-shrink:0;box-shadow:0 0 16px rgba(255,215,0,.25);background:#1a1a2e}
+.medallion img{width:100%;height:100%;object-fit:cover;object-position:center center;display:block}
+.header-text h1{font-size:21px;font-weight:900;color:var(--gold);text-transform:uppercase;letter-spacing:1px;line-height:1.2}
+.header-text p{font-size:13px;color:#bbb;margin-top:1px}
+.wc-tag{display:inline-block;background:var(--red);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px}
+.nav{background:var(--card2);border-bottom:2px solid var(--border);overflow-x:auto;display:flex;position:sticky;top:0;z-index:200;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:14px 16px;background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;letter-spacing:.5px}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-btn:hover{color:#fff}
+.main{max-width:720px;margin:0 auto;padding:18px 13px 70px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.card-title{font-size:18px;font-weight:700;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:9px;margin-bottom:14px}
+input,select{background:#0c0c20;border:2px solid var(--border);border-radius:8px;color:#fff;padding:13px 15px;font-size:17px;width:100%;margin-bottom:8px}
+input:focus,select:focus{outline:none;border-color:var(--red)}
+input::placeholder{color:var(--muted)}
+.btn{padding:14px 22px;border:none;border-radius:10px;font-size:17px;font-weight:700;cursor:pointer;width:100%;margin-top:5px;transition:opacity .15s}
+.btn:hover{opacity:.87}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-red{background:var(--red);color:#fff}
+.btn-gold{background:var(--gold);color:#000}
+.btn-green{background:var(--green);color:#fff}
+.btn-blue{background:#2980b9;color:#fff}
+.btn-outline{background:none;border:2px solid var(--border);color:var(--muted)}
+.btn-sm{padding:9px 15px;font-size:14px;width:auto}
+/* GROUP STAGE */
+.group-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:460px){.group-grid{grid-template-columns:1fr}}
+.group-card{background:var(--card2);border:2px solid var(--border);border-radius:10px;padding:11px}
+.group-label{font-size:14px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:9px}
+.team-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;margin-bottom:5px;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:#fff;font-size:13px;cursor:pointer;transition:border-color .12s;text-align:left}
+.team-btn:hover:not(:disabled):not(.blocked){border-color:var(--red)}
+.team-btn.sel-1{border-color:var(--gold);background:#1c1600}
+.team-btn.sel-2{border-color:#6060ee;background:#0a0a1e}
+.team-btn.sel-3{border-color:#886644;background:#140d06}
+.team-btn.blocked{opacity:.28;cursor:not-allowed}
+.pos-badge{font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0}
+.p1{background:var(--gold);color:#000}
+.p2{background:#6060ee;color:#fff}
+.p3{background:#886644;color:#fff}
+.counter-bar{background:var(--card);border:2px solid var(--gold2);border-radius:9px;padding:11px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.counter-num{font-size:24px;font-weight:900;color:var(--gold)}
+/* BRACKET */
+.round-title{font-size:16px;font-weight:700;color:var(--red);margin:18px 0 9px;text-transform:uppercase;letter-spacing:1px}
+.match-row{background:var(--card2);border:2px solid var(--border);border-radius:9px;padding:11px;margin-bottom:7px;display:flex;align-items:center;gap:9px}
+.match-num{font-size:11px;color:var(--muted);min-width:36px}
+.match-teams{flex:1;display:flex;flex-direction:column;gap:5px}
+.match-team{padding:10px 13px;background:var(--bg);border:2px solid var(--border);border-radius:7px;color:#fff;font-size:14px;cursor:pointer;transition:border-color .12s;text-align:left;width:100%}
+.match-team:hover:not(:disabled){border-color:var(--red)}
+.match-team.winner{background:#082008;border-color:var(--green);color:var(--green);font-weight:700}
+.match-team.loser{opacity:.32}
+.match-team.tbd{color:var(--muted);cursor:not-allowed;font-style:italic}
+.match-vs{font-size:10px;color:var(--muted);text-align:center}
+/* LEADERBOARD */
+.lb-row{display:flex;align-items:center;padding:12px 13px;border-bottom:1px solid var(--border);gap:9px}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-size:19px;font-weight:900;min-width:34px;text-align:center}
+.r1{color:var(--gold)} .r2{color:#c0c0c0} .r3{color:#cd7f32}
+.lb-info{flex:1}
+.lb-name{font-size:16px;font-weight:700}
+.lb-meta{font-size:12px;color:var(--muted)}
+.lb-pts{font-size:19px;font-weight:700;color:var(--gold);text-align:right;min-width:55px}
+.pay-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:5px;vertical-align:middle}
+.pdg{background:var(--green)} .pdr{background:var(--danger)}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:500;padding:14px}
+.modal{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:26px;max-width:380px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:20px;color:var(--gold);margin-bottom:12px}
+/* CHAMPION */
+.champ-box{background:linear-gradient(135deg,#1e1200,#130004);border:3px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin:14px 0}
+.champ-trophy{font-size:44px}
+.champ-name{font-size:24px;font-weight:900;color:var(--gold);margin-top:5px}
+.champ-label{font-size:12px;color:var(--muted)}
+/* ALERTS */
+.alert{background:#151400;border:2px solid var(--gold2);border-radius:9px;padding:12px;font-size:14px;line-height:1.5;margin-bottom:12px}
+.alert.info{background:#0c0c1e;border-color:var(--muted)}
+.alert.success{background:#081408;border-color:var(--green)}
+.alert.error{background:#180808;border-color:var(--danger)}
+/* ADMIN */
+.atbl{width:100%;border-collapse:collapse}
+.atbl th{background:var(--card2);padding:10px 11px;font-size:13px;color:var(--muted);text-align:left;border-bottom:2px solid var(--border)}
+.atbl td{padding:11px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+.stat-box{background:var(--card2);border-radius:10px;padding:14px;text-align:center}
+.stat-num{font-size:28px;font-weight:900}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+/* STEPS BAR */
+.steps-bar{display:flex;align-items:center;margin-bottom:16px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+.steps-bar::-webkit-scrollbar{display:none}
+.step-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:var(--muted)}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#000}
+.step-dot.active{background:var(--red);border-color:var(--red);color:#fff}
+.step-line{flex:1;height:2px;background:var(--border);min-width:8px}
+/* MISC */
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:700}
+.tg{background:var(--green);color:#000} .tr{background:var(--danger);color:#fff}
+.ty{background:var(--gold);color:#000} .tm{background:var(--border);color:var(--muted)}
+.divider{border:none;border-top:1px solid var(--border);margin:12px 0}
+.muted{color:var(--muted);font-size:13px}
+.gold{color:var(--gold)}
+.summary-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
+.summary-row:last-child{border-bottom:none}
+.page{display:none} .page.active{display:block}
+.hidden{display:none!important}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:2px solid var(--green);border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;z-index:999;opacity:0;transition:opacity .28s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#0a1a0a;border:1px solid var(--green);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--green);font-weight:700}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.firebase-status{font-size:12px;color:var(--muted);text-align:center;padding:8px;margin-bottom:10px}
+.firebase-status.connected{color:var(--green)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="medallion"><img id="headerLogo" src="fifa2026.png" alt="FIFA World Cup 2026"></div>
+    <div class="header-text">
+      <h1>⚽ Polla Mundialista</h1>
+      <p id="headerSubtitle">FIFA World Cup 2026</p>
+      <span class="wc-tag">🌍 FIFA WORLD CUP 2026</span>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" id="nav"></nav>
+
+<div class="page" id="pageLanding" style="display:none"></div>
+<noscript>
+  <div style="max-width:600px;margin:40px auto;padding:20px;color:#fff;font-family:Arial,sans-serif">
+    <h1>Polla Mundialista 2026 - Quiniela del Mundial FIFA</h1>
+    <p>Crea tu polla mundialista gratis para el Mundial de Futbol 2026. Pronostica el campeon, goleador, clasificados de cada grupo y resultados de cada ronda. Compite con tu familia, amigos o companeros de trabajo. Resultados en tiempo real con API-Football. Disponible en Ecuador y todo Latinoamerica.</p>
+    <h2>Caracteristicas</h2>
+    <ul>
+      <li>Crea grupos privados para tu familia o amigos</li>
+      <li>Pronostica los 48 equipos del Mundial 2026</li>
+      <li>Rondas: 16avos, 8avos, cuartos, semifinal y final</li>
+      <li>Predice al campeon, subcampeon y goleador</li>
+      <li>Resultados automaticos en tiempo real</li>
+      <li>Tabla de posiciones y puntuacion</li>
+      <li>Gratis - sin descargar nada</li>
+    </ul>
+    <p>Polla mundialista, quiniela mundial 2026, pronosticos futbol, predicciones mundial FIFA 2026, porra deportiva, apuestas mundial Ecuador.</p>
+  </div>
+</noscript>
+<main class="main">
+  <div id="firebase-banner" class="firebase-status" style="display:none"></div>
+  <div class="page active" id="pageHome"></div>
+  <div class="page" id="pageNueva"></div>
+  <div class="page" id="pageTabla"></div>
+  <div class="page" id="pageMias"></div>
+  <div class="page" id="pageTodas"></div>
+  <div class="page" id="pageAdmin"></div>
+</main>
+
+<div class="overlay hidden" id="overlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// ★ CONFIGURACIÓN — EDITAR ESTOS VALORES ★
+// ============================================================
+
+// Reemplaza estos valores con los de tu proyecto Firebase:
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBZ8K6n_L2k68RdNXLqlua6XboAQkZwUNI",
+  authDomain:        "polla-mundialista-2026-e9a0b.firebaseapp.com",
+  databaseURL:       "https://polla-mundialista-2026-e9a0b-default-rtdb.firebaseio.com",
+  projectId:         "polla-mundialista-2026-e9a0b",
+  storageBucket:     "polla-mundialista-2026-e9a0b.firebasestorage.app",
+  messagingSenderId: "73575186858",
+  appId:             "1:73575186858:web:f6068349bd7475effc2bd3"
+};
+
+// Tu API key de api-sports.io (plan Free, 100 llamadas/día):
+const API_FOOTBALL_KEY = '35d3360107b5b97f557ae4b395c6fdaa';
+
+// ============================================================
+// DATOS — GRUPOS REALES FIFA 2026 (sorteo dic. 2025)
+// ============================================================
+const GROUPS = {
+  A: ['México','Sudáfrica','Corea del Sur','República Checa'],
+  B: ['Canadá','Bosnia-Herzegovina','Qatar','Suiza'],
+  C: ['Brasil','Marruecos','Haití','Escocia'],
+  D: ['Estados Unidos','Paraguay','Australia','Turquía'],
+  E: ['Alemania','Curazao','Costa de Marfil','Ecuador'],
+  F: ['Países Bajos','Japón','Suecia','Túnez'],
+  G: ['Bélgica','Egipto','Irán','Nueva Zelanda'],
+  H: ['España','Cabo Verde','Arabia Saudita','Uruguay'],
+  I: ['Francia','Senegal','Irak','Noruega'],
+  J: ['Argentina','Argelia','Austria','Jordania'],
+  K: ['Portugal','RD Congo','Uzbekistán','Colombia'],
+  L: ['Inglaterra','Croacia','Ghana','Panamá']
+};
+
+const FLAGS = {
+  'México':'🇲🇽','Sudáfrica':'🇿🇦','Corea del Sur':'🇰🇷','República Checa':'🇨🇿',
+  'Canadá':'🇨🇦','Bosnia-Herzegovina':'🇧🇦','Qatar':'🇶🇦','Suiza':'🇨🇭',
+  'Brasil':'🇧🇷','Marruecos':'🇲🇦','Haití':'🇭🇹','Escocia':'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'Estados Unidos':'🇺🇸','Paraguay':'🇵🇾','Australia':'🇦🇺','Turquía':'🇹🇷',
+  'Alemania':'🇩🇪','Curazao':'🇨🇼','Costa de Marfil':'🇨🇮','Ecuador':'🇪🇨',
+  'Países Bajos':'🇳🇱','Japón':'🇯🇵','Suecia':'🇸🇪','Túnez':'🇹🇳',
+  'Bélgica':'🇧🇪','Egipto':'🇪🇬','Irán':'🇮🇷','Nueva Zelanda':'🇳🇿',
+  'España':'🇪🇸','Cabo Verde':'🇨🇻','Arabia Saudita':'🇸🇦','Uruguay':'🇺🇾',
+  'Francia':'🇫🇷','Senegal':'🇸🇳','Irak':'🇮🇶','Noruega':'🇳🇴',
+  'Argentina':'🇦🇷','Argelia':'🇩🇿','Austria':'🇦🇹','Jordania':'🇯🇴',
+  'Portugal':'🇵🇹','RD Congo':'🇨🇩','Uzbekistán':'🇺🇿','Colombia':'🇨🇴',
+  'Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croacia':'🇭🇷','Ghana':'🇬🇭','Panamá':'🇵🇦'
+};
+// fl(team) → "🇦🇷 Argentina"
+const fl = t => t ? (FLAGS[t] ? FLAGS[t]+' '+t : t) : '';
+
+// R32 cruces oficiales FIFA 2026
+const R32_DEF = [
+  {id:'m73',h:'2A',a:'2B'}, {id:'m74',h:'1E',a:'3X'},
+  {id:'m75',h:'1F',a:'2C'}, {id:'m76',h:'1C',a:'2F'},
+  {id:'m77',h:'1I',a:'3X'}, {id:'m78',h:'2E',a:'2I'},
+  {id:'m79',h:'1A',a:'3X'}, {id:'m80',h:'1L',a:'3X'},
+  {id:'m81',h:'1D',a:'3X'}, {id:'m82',h:'1G',a:'3X'},
+  {id:'m83',h:'2K',a:'2L'}, {id:'m84',h:'1H',a:'2J'},
+  {id:'m85',h:'1B',a:'3X'}, {id:'m86',h:'1J',a:'2H'},
+  {id:'m87',h:'1K',a:'3X'}, {id:'m88',h:'2D',a:'2G'}
+];
+const R16_DEF = [
+  {id:'r16_1',m1:'m73',m2:'m74'},{id:'r16_2',m1:'m75',m2:'m76'},
+  {id:'r16_3',m1:'m77',m2:'m78'},{id:'r16_4',m1:'m79',m2:'m80'},
+  {id:'r16_5',m1:'m81',m2:'m82'},{id:'r16_6',m1:'m83',m2:'m84'},
+  {id:'r16_7',m1:'m85',m2:'m86'},{id:'r16_8',m1:'m87',m2:'m88'}
+];
+const QF_DEF = [
+  {id:'qf1',m1:'r16_1',m2:'r16_2'},{id:'qf2',m1:'r16_3',m2:'r16_4'},
+  {id:'qf3',m1:'r16_5',m2:'r16_6'},{id:'qf4',m1:'r16_7',m2:'r16_8'}
+];
+const SF_DEF = [
+  {id:'sf1',m1:'qf1',m2:'qf2'},{id:'sf2',m1:'qf3',m2:'qf4'}
+];
+
+// Mapa de nombres EN → ES para la API
+const TEAM_MAP = {
+  'Mexico':'México','South Korea':'Corea del Sur','Korea Republic':'Corea del Sur',
+  'Czech Republic':'República Checa','Czechia':'República Checa',
+  'Bosnia and Herzegovina':'Bosnia-Herzegovina','Bosnia':'Bosnia-Herzegovina',
+  'United States':'Estados Unidos','USA':'Estados Unidos',
+  'Netherlands':'Países Bajos','Holland':'Países Bajos',
+  'Belgium':'Bélgica','Spain':'España','France':'Francia',
+  'Argentina':'Argentina','Portugal':'Portugal','England':'Inglaterra',
+  'Morocco':'Marruecos','Ivory Coast':'Costa de Marfil',
+  "Cote d'Ivoire":'Costa de Marfil',"Côte d'Ivoire":'Costa de Marfil',
+  'Tunisia':'Túnez','Egypt':'Egipto','Iran':'Irán','Cape Verde':'Cabo Verde',
+  'Saudi Arabia':'Arabia Saudita','Saudi':'Arabia Saudita',
+  'Senegal':'Senegal','Iraq':'Irak','Algeria':'Argelia',
+  'Congo DR':'RD Congo','DR Congo':'RD Congo','Democratic Republic of Congo':'RD Congo',
+  'Japan':'Japón','Sweden':'Suecia','Germany':'Alemania',
+  'Australia':'Australia','Turkey':'Turquía','Ecuador':'Ecuador',
+  'Panama':'Panamá','Paraguay':'Paraguay','Canada':'Canadá','Brazil':'Brasil',
+  'Colombia':'Colombia','Norway':'Noruega','Jordan':'Jordania',
+  'Austria':'Austria','Croatia':'Croacia','Ghana':'Ghana',
+  'New Zealand':'Nueva Zelanda','Uruguay':'Uruguay','Uzbekistan':'Uzbekistán',
+  'Haiti':'Haití','Scotland':'Escocia','Curacao':'Curazao','Curaçao':'Curazao',
+  'Switzerland':'Suiza','Qatar':'Qatar','South Africa':'Sudáfrica'
+};
+const mapTeam = n => TEAM_MAP[n] || n;
+
+// Puntos
+const PTS = {r32:1,r16:1,qf:1,sf:1,fourth:2,third:4,second:6,champion:10,scorer:5};
+
+const WC_LEAGUE  = 1;
+const WC_SEASON  = 2026;
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {user:null, pollas:{}, resultados:null, page:'home'};
+let draft = null;
+let db = null;
+let firebaseOK = false;
+let autoSyncTimer = null;
+let GID = null;  // group ID from URL ?g=
+let GC  = null;  // group config {name,price,...}
+
+const GLOBAL_ADMIN = 'Daniel Chávez';
+const GLOBAL_PASS  = '112358';
+const GLOBAL_BANK  = { name:'Banco Pichincha', account:'3304845400', holder:'Ana Landazuri' };
+
+const gRef = path => `/groups/${GID}/${path}`;
+
+// ============================================================
+// FIREBASE
+// ============================================================
+function initFirebase() {
+  const isConfigured = FIREBASE_CONFIG.databaseURL &&
+                       !FIREBASE_CONFIG.databaseURL.includes('TU_PROYECTO');
+  const banner = document.getElementById('firebase-banner');
+
+  if (!isConfigured) {
+    banner.style.display = 'block';
+    banner.textContent = '⚠️ Modo local — los datos solo se guardan en este dispositivo.';
+    loadLocal();
+    return;
+  }
+
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    firebaseOK = true;
+
+    // Check for group in URL
+    GID = new URLSearchParams(window.location.search).get('g');
+
+    if (!GID) {
+      // No group — show landing page
+      document.getElementById('nav').style.display = 'none';
+      document.querySelector('.main').style.display = 'none';
+      document.getElementById('pageLanding').style.display = 'block';
+      renderLanding();
+      return;
+    }
+
+    // Load group config
+    db.ref(`/groups/${GID}/config`).once('value').then(snap => {
+      GC = snap.val();
+      if (!GC) {
+        alert('Grupo no encontrado');
+        window.location.href = window.location.pathname;
+        return;
+      }
+      // Update header with group name and logo
+      document.getElementById('headerSubtitle').textContent = GC.name;
+      if (GID === 'cooperativa-familiar') {
+        document.getElementById('headerLogo').src = 'logo.jpg';
+      }
+
+      banner.style.display = 'block';
+      banner.classList.add('connected');
+      banner.textContent = '🟢 Conectado en tiempo real — todos ven los cambios al instante';
+
+      // Real-time listener — pollas
+      db.ref(gRef('pollas')).on('value', snap => {
+        state.pollas = snap.val() || {};
+        refreshCurrentPage();
+      });
+
+      // Real-time listener — resultados oficiales
+      db.ref(gRef('resultados')).on('value', snap => {
+        state.resultados = snap.val() || null;
+        recalcAll(false);
+        refreshCurrentPage();
+      });
+
+      showPage('home');
+    });
+  } catch(e) {
+    console.error('Firebase:', e);
+    banner.style.display = 'block';
+    banner.textContent = '❌ Error Firebase: ' + e.message;
+    loadLocal();
+  }
+}
+
+function saveData() {
+  if (firebaseOK && db && GID) {
+    db.ref(gRef('pollas')).set(state.pollas || {});
+    if (state.resultados) db.ref(gRef('resultados')).set(state.resultados);
+  } else {
+    localStorage.setItem('pm26_pollas', JSON.stringify(state.pollas));
+    localStorage.setItem('pm26_res', JSON.stringify(state.resultados));
+  }
+}
+
+function loadLocal() {
+  try {
+    state.pollas = JSON.parse(localStorage.getItem('pm26_pollas') || '{}');
+    state.resultados = JSON.parse(localStorage.getItem('pm26_res') || 'null');
+  } catch(e) {
+    state.pollas = {}; state.resultados = null;
+  }
+}
+
+function refreshCurrentPage() {
+  const fn = renders[state.page];
+  if (fn) fn();
+}
+
+// ============================================================
+// API-FOOTBALL — SINCRONIZACIÓN AUTOMÁTICA
+// ============================================================
+async function fetchWorldCupResults() {
+  const statusEl = document.getElementById('apiStatus');
+  const setStatus = msg => { if(statusEl) statusEl.textContent = msg; };
+  setStatus('🔄 Conectando con API-Football...');
+
+  try {
+    const headers = {
+      'x-apisports-key': API_FOOTBALL_KEY
+    };
+    const base = 'https://v3.football.api-sports.io';
+
+    // 1. Standings (clasificación grupos)
+    const sRes = await fetch(`${base}/standings?league=${WC_LEAGUE}&season=${WC_SEASON}`, {headers});
+    const sData = await sRes.json();
+    const grupos = {};
+    if (sData.response && sData.response[0]) {
+      const standings = sData.response[0].league.standings;
+      for (const grp of standings) {
+        if (!grp.length) continue;
+        const letter = (grp[0].group || '').replace(/group /i,'').trim().toUpperCase();
+        if (/^[A-L]$/.test(letter)) {
+          grupos[letter] = {
+            p1: grp[0] ? mapTeam(grp[0].team.name) : null,
+            p2: grp[1] ? mapTeam(grp[1].team.name) : null,
+            p3: grp[2] ? mapTeam(grp[2].team.name) : null
+          };
+        }
+      }
+    }
+
+    // 2. Fixtures terminados
+    const fRes = await fetch(`${base}/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&status=FT`, {headers});
+    const fData = await fRes.json();
+    const bracket = {r32:[],r16:[],qf:[],sf:[]};
+    let champion = '', second = '', third = '', fourth = '';
+
+    for (const fix of (fData.response || [])) {
+      const round = (fix.league.round || '').toLowerCase();
+      const homeW = fix.teams.home.winner;
+      const awayW = fix.teams.away.winner;
+      const winner = homeW ? mapTeam(fix.teams.home.name) : awayW ? mapTeam(fix.teams.away.name) : null;
+      const loser  = homeW ? mapTeam(fix.teams.away.name) : awayW ? mapTeam(fix.teams.home.name) : null;
+      if (!winner) continue;
+      if (round.includes('32'))      bracket.r32.push(winner);
+      else if (round.includes('16')) bracket.r16.push(winner);
+      else if (round.includes('quarter')) bracket.qf.push(winner);
+      else if (round.includes('semi'))    bracket.sf.push(winner);
+      else if (round.includes('3rd') || round.includes('third') || round.includes('tercer')) {
+        third = winner; fourth = loser;
+      } else if (round.includes('final')) {
+        champion = winner; second = loser;
+      }
+    }
+
+    // 3. Top scorers
+    let topScorer = state.resultados?.topScorer || '';
+    try {
+      const tRes = await fetch(`${base}/players/topscorers?league=${WC_LEAGUE}&season=${WC_SEASON}`, {headers});
+      const tData = await tRes.json();
+      if (tData.response && tData.response[0]) {
+        topScorer = tData.response[0].player.name;
+      }
+    } catch(_) {}
+
+    const newRes = {
+      grupos,
+      bracket,
+      champion: champion || state.resultados?.champion || '',
+      second:   second   || state.resultados?.second   || '',
+      third:    third    || state.resultados?.third    || '',
+      fourth:   fourth   || state.resultados?.fourth   || '',
+      topScorer,
+      lastUpdated: new Date().toISOString()
+    };
+
+    state.resultados = newRes;
+    recalcAll(true);
+    setStatus('✅ Sincronizado: ' + new Date().toLocaleTimeString('es') +
+              (Object.keys(grupos).length ? ' · ' + Object.keys(grupos).length + ' grupos' : '') +
+              (champion ? ' · Campeón: ' + champion : ''));
+    toast('✅ Resultados actualizados desde API');
+    renderTabla();
+
+  } catch(e) {
+    console.error('API error:', e);
+    setStatus('❌ Error API: ' + e.message + '. Verifica tu API key en dashboard.api-football.com');
+  }
+}
+
+function startAutoSync() {
+  if (autoSyncTimer) clearInterval(autoSyncTimer);
+  fetchWorldCupResults();
+  autoSyncTimer = setInterval(fetchWorldCupResults, 10 * 60 * 1000); // cada 10 min
+}
+
+// ============================================================
+// SCORING
+// ============================================================
+function calcPoints(polla, res) {
+  if (!res) return 0;
+  let pts = 0;
+
+  function predPassed(team, round) {
+    if (round === 'r32') {
+      for (const g of Object.keys(GROUPS)) {
+        if (GROUPS[g].includes(team)) {
+          const pg = polla.grupos && polla.grupos[g];
+          if (!pg) return false;
+          if (pg.p1 === team || pg.p2 === team) return true;
+          if (pg.p3 === team && polla.terceros && polla.terceros.includes(g)) return true;
+          return false;
+        }
+      }
+      return false;
+    }
+    return polla.bracket && polla.bracket[round] && polla.bracket[round].includes(team);
+  }
+
+  if (res.bracket) {
+    for (const rnd of ['r32','r16','qf','sf']) {
+      for (const team of (res.bracket[rnd] || [])) {
+        if (predPassed(team, rnd)) pts += PTS[rnd];
+      }
+    }
+  }
+  if (res.champion && polla.champion === res.champion) pts += PTS.champion;
+  if (res.second   && polla.second   === res.second)   pts += PTS.second;
+  if (res.third    && polla.third    === res.third)    pts += PTS.third;
+  if (res.fourth   && polla.fourth   === res.fourth)   pts += PTS.fourth;
+  if (res.topScorer && polla.topScorer &&
+      polla.topScorer.toLowerCase().trim() === res.topScorer.toLowerCase().trim())
+    pts += PTS.scorer;
+  return pts;
+}
+
+function recalcAll(persist) {
+  if (!state.resultados) return;
+  for (const id of Object.keys(state.pollas)) {
+    state.pollas[id].points = calcPoints(state.pollas[id], state.resultados);
+  }
+  if (persist) saveData();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+
+function toast(msg, ms=2300) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function showOverlay(html) {
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('overlay').classList.remove('hidden');
+}
+function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+document.getElementById('overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('overlay')) hideOverlay();
+});
+
+function showPage(name) {
+  if (name === 'nueva') startDraft();
+  state.page = name;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + name[0].toUpperCase() + name.slice(1)).classList.add('active');
+  renderNav();
+  const fn = renders[name];
+  if (fn) fn();
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function userHasPaid() {
+  if (!state.user) return false;
+  if (state.user.isAdmin) return true;
+  return Object.values(state.pollas).some(p => p.userName === state.user.name && p.paid);
+}
+
+function renderNav() {
+  const paid = userHasPaid();
+  const tabs = [
+    {id:'home',  label:'🏠 Inicio'},
+    {id:'tabla', label:'🏆 Tabla'},
+    {id:'todas', label: paid ? '👥 Todos' : '🔒 Todos'},
+  ];
+  if (state.user) {
+    tabs.push({id:'nueva', label:'➕ Nueva Polla'});
+    tabs.push({id:'mias',  label:'📋 Mis Pollas'});
+  }
+  if (state.user?.isAdmin) tabs.push({id:'admin', label:'🔑 Admin'});
+  document.getElementById('nav').innerHTML = tabs.map(t =>
+    `<button class="nav-btn${state.page===t.id?' active':''}" onclick="showPage('${t.id}')">${t.label}</button>`
+  ).join('');
+}
+
+// ============================================================
+// HOME
+// ============================================================
+// ============================================================
+// LANDING PAGE — sin grupo seleccionado
+// ============================================================
+async function renderLanding() {
+  // Load all groups from Firebase
+  let groupsHTML = '';
+  try {
+    const snap = await db.ref('/groups').once('value');
+    const groups = snap.val() || {};
+    const entries = Object.entries(groups);
+    if (entries.length) {
+      groupsHTML = entries.map(([slug, g]) => {
+        const c = g.config || {};
+        const pollaCount = g.pollas ? Object.keys(g.pollas).length : 0;
+        const isFamily = slug === 'cooperativa-familiar';
+        return `
+          <a href="?g=${slug}" style="display:block;text-decoration:none;color:inherit;margin-bottom:10px">
+            <div style="background:var(--card2);border:2px solid ${isFamily?'var(--gold)':'var(--border)'};border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;transition:border-color .15s">
+              <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid ${isFamily?'var(--gold)':'var(--border)'};background:#1a1a2e">
+                <img src="${isFamily?'logo.jpg':'fifa2026.png'}" style="width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:700;font-size:15px;color:${isFamily?'var(--gold)':'#fff'}">${isFamily?'👨‍👩‍👧‍👦 ':''} ${c.name||slug}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">${pollaCount} polla${pollaCount!==1?'s':''} · $${c.price||3} c/u</div>
+              </div>
+              <div style="color:var(--muted);font-size:20px">›</div>
+            </div>
+          </a>`;
+      }).join('');
+    }
+  } catch(e) { console.log('Error loading groups', e); }
+
+  document.getElementById('pageLanding').innerHTML = `
+    <div style="max-width:520px;margin:0 auto;padding:24px 16px;min-height:100vh">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 12px;border:3px solid var(--gold);background:#1a1a2e">
+          <img src="fifa2026.png" style="width:100%;height:100%;object-fit:cover">
+        </div>
+        <h1 style="font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px">POLLA MUNDIALISTA 2026</h1>
+        <p style="color:var(--muted);font-size:15px;margin-top:4px">FIFA World Cup 2026 - Ecuador</p>
+        <p style="color:#bbb;font-size:13px;margin-top:10px">Crea tu polla mundialista gratis para el Mundial 2026. Pronostica campeón, goleador y resultados con tu familia, amigos o compañeros de trabajo.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;padding:16px">
+        <h2 style="font-size:16px;color:var(--gold);margin-bottom:10px">Como funciona tu Polla Mundialista</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+            <div style="font-size:28px;margin-bottom:4px">1</div>
+            <div style="font-size:12px;color:#bbb">Crea tu grupo o entra a uno existente</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+            <div style="font-size:28px;margin-bottom:4px">2</div>
+            <div style="font-size:12px;color:#bbb">Pronostica clasificados, campeón y goleador</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+            <div style="font-size:28px;margin-bottom:4px">3</div>
+            <div style="font-size:12px;color:#bbb">Los resultados se actualizan en tiempo real</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+            <div style="font-size:28px;margin-bottom:4px">4</div>
+            <div style="font-size:12px;color:#bbb">Gana quien acumule más puntos</div>
+          </div>
+        </div>
+      </div>
+
+      ${groupsHTML ? `
+        <div style="margin-bottom:18px">
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Grupos activos</div>
+          ${groupsHTML}
+        </div>
+      ` : ''}
+
+      <div class="card" id="landingMain">
+        <button class="btn btn-gold" style="font-size:19px;padding:16px" onclick="showCreateGroup()">➕ Crear nuevo grupo</button>
+        <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px">Quiniela mundialista gratis - Comparte el link con quien quieras</p>
+      </div>
+
+      <div class="card" id="createGroupForm" style="display:none">
+        <div class="card-title">Crear nuevo grupo</div>
+        <label class="muted" style="font-size:13px">Nombre del grupo *</label>
+        <input type="text" id="cgName" placeholder="Ej: Familia García López">
+        <label class="muted" style="font-size:13px">Precio por polla ($)</label>
+        <input type="number" id="cgPrice" value="3" min="1" max="100">
+        <div style="background:#0a1a0a;border:1px solid var(--green);border-radius:8px;padding:12px;margin:8px 0;font-size:13px;color:#bbb">
+          <span style="color:var(--green);font-weight:700">💳 Pagos vía ${GLOBAL_BANK.name}</span><br>
+          Cuenta: <strong style="color:#fff">${GLOBAL_BANK.account}</strong><br>
+          A nombre de: ${GLOBAL_BANK.holder}
+        </div>
+        <button class="btn btn-gold" style="margin-top:10px" onclick="submitCreateGroup()">✅ CREAR GRUPO</button>
+        <button class="btn btn-outline" style="margin-top:6px" onclick="document.getElementById('createGroupForm').style.display='none';document.getElementById('landingMain').style.display='block'">Cancelar</button>
+      </div>
+    </div>`;
+}
+
+window.showCreateGroup = () => {
+  document.getElementById('landingMain').style.display = 'none';
+  document.getElementById('createGroupForm').style.display = 'block';
+};
+
+window.submitCreateGroup = async () => {
+  const name  = document.getElementById('cgName').value.trim();
+  const price = parseInt(document.getElementById('cgPrice').value) || 3;
+  if (!name) { toast('⚠️ Escribe el nombre del grupo'); return; }
+
+  // Generate slug
+  const slug = name.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    .substring(0, 40);
+
+  const config = {
+    name,
+    price,
+    createdAt: new Date().toISOString()
+  };
+
+  // Check if slug exists
+  const snap = await db.ref(`/groups/${slug}/config`).once('value');
+  const finalSlug = snap.exists() ? slug + '-' + Date.now().toString(36).slice(-4) : slug;
+
+  await db.ref(`/groups/${finalSlug}/config`).set(config);
+  window.location.href = window.location.pathname + '?g=' + finalSlug;
+};
+
+function renderHome() {
+  const el = document.getElementById('pageHome');
+  if (state.user) {
+    const mine = Object.values(state.pollas).filter(p => p.userName === state.user.name);
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-title">¡Hola, ${state.user.name}! 👋</div>
+        <button class="btn btn-red" onclick="showPage('nueva')">➕ Crear Nueva Polla ($${GC?.price||3})</button>
+        <button class="btn btn-outline" style="margin-top:8px" onclick="showPage('tabla')">🏆 Ver Tabla</button>
+        <button class="btn btn-outline" style="margin-top:6px" onclick="showPage('mias')">📋 Mis Pollas</button>
+        <hr class="divider">
+        <button class="btn btn-outline btn-sm" style="width:auto;font-size:12px" onclick="logout()">Cambiar usuario</button>
+      </div>
+      ${mine.length ? renderMineCards(mine) : '<div class="alert info" style="text-align:center">Aún no tienes pollas. ¡Crea la primera!</div>'}
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="card">
+        <div class="card-title" style="text-align:center">¡Bienvenido a la Polla Mundialista! 🏆</div>
+        <div class="alert">🌍 <strong>Mundial 2026</strong> — Ingresa tu nombre para hacer tus pronósticos y competir con la familia. Cada polla cuesta <strong style="color:var(--gold)">$${GC?.price||3}</strong>.</div>
+        <div style="background:#0a1a0a;border:2px solid var(--green);border-radius:10px;padding:14px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">💳 DATOS DE PAGO — ${GLOBAL_BANK.name}</div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:15px">
+            <span class="muted">Cuenta</span><strong>${GLOBAL_BANK.account}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px">
+            <span class="muted">A nombre de</span><span>${GLOBAL_BANK.holder}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px">
+            <span class="muted">Valor</span><strong style="color:var(--gold)">$${GC?.price||3} por polla</strong>
+          </div>
+        </div>
+        <label class="muted" style="display:block;margin-bottom:5px">Tu nombre completo:</label>
+        <input type="text" id="nameInput" placeholder="Ej: María García" style="font-size:20px" autocomplete="off">
+        <button class="btn btn-red" onclick="doLogin()">ENTRAR ▶</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Sistema de Puntos</div>
+        ${[['Equipo pasa a 16avos','+1 pt'],['Equipo pasa a 8avos','+1 pt'],
+           ['Equipo pasa a cuartos','+1 pt'],['Equipo llega a semis','+1 pt'],
+           ['4to puesto','+2 pts extra'],['3er puesto','+4 pts extra'],
+           ['Subcampeón','+6 pts extra'],['Campeón 🏆','+10 pts extra'],
+           ['Acertar goleador ⚽','+5 pts bonus']].map(([l,v])=>
+          `<div class="summary-row"><span class="muted">${l}</span><span class="gold" style="font-weight:700">${v}</span></div>`
+        ).join('')}
+      </div>
+    `;
+    setTimeout(() => {
+      const i = document.getElementById('nameInput');
+      if (i) i.addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+    }, 50);
+  }
+}
+
+function renderMineCards(mine) {
+  return '<div class="card"><div class="card-title">Mis Pollas</div>' +
+    mine.sort((a,b)=>(a.pollaNr||0)-(b.pollaNr||0)).map(p => `
+      <div class="lb-row" style="cursor:pointer" onclick="showPollaDetail('${p.id}')">
+        <div class="lb-info">
+          <div class="lb-name">Polla #${p.pollaNr||'?'}</div>
+          <div class="lb-meta">🏆 ${p.champion||'—'} | ⚽ ${p.topScorer||'—'}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="lb-pts">${p.points||0}</div>
+          <span class="tag ${p.paid?'tg':'tr'}">${p.paid?'✓ Pagó':'✗ Debe'}</span>
+        </div>
+      </div>`).join('') + '</div>';
+}
+
+function doLogin() {
+  const name = (document.getElementById('nameInput')?.value||'').trim();
+  if (!name) { toast('⚠️ Escribe tu nombre y apellido'); return; }
+  if (name !== GLOBAL_ADMIN && name.trim().split(/\s+/).length < 2) {
+    toast('⚠️ Escribe tu nombre Y apellido (ej: María García)'); return;
+  }
+  if (name === GLOBAL_ADMIN) {
+    showOverlay(`
+      <h2>🔑 Acceso Admin</h2>
+      <p class="muted" style="margin-bottom:10px">Hola Daniel, ingresa tu contraseña:</p>
+      <input type="password" id="passInput" placeholder="Contraseña" autofocus>
+      <button class="btn btn-red" onclick="checkAdmin('${name.replace(/'/g,"\\'")}')">ENTRAR</button>
+      <button class="btn btn-outline" style="margin-top:6px" onclick="hideOverlay()">Cancelar</button>
+    `);
+    setTimeout(()=>{
+      const i=document.getElementById('passInput');
+      if(i) i.addEventListener('keypress',e=>{if(e.key==='Enter') checkAdmin(name);});
+    },50);
+  } else {
+    state.user = {name, isAdmin:false};
+    hideOverlay();
+    showPage('home');
+    toast('¡Bienvenido, ' + name + '! 👋');
+  }
+}
+
+function checkAdmin(name) {
+  const pass = document.getElementById('passInput')?.value || '';
+  if (pass === GLOBAL_PASS) {
+    state.user = {name, isAdmin:true};
+    hideOverlay();
+    showPage('admin');
+    toast('✅ Acceso admin concedido');
+  } else { toast('❌ Contraseña incorrecta'); }
+}
+
+function logout() { state.user = null; showPage('home'); }
+
+// ============================================================
+// TABLA
+// ============================================================
+function renderTabla() {
+  const el = document.getElementById('pageTabla');
+  const all = Object.values(state.pollas);
+  const paid = all.filter(p=>p.paid).sort((a,b)=>(b.points||0)-(a.points||0));
+  const unpaid = all.filter(p=>!p.paid);
+  let html = '<div class="card"><div class="card-title">🏆 Tabla de Posiciones';
+  if (firebaseOK) html += ' <span class="live-badge"><span class="live-dot"></span>EN VIVO</span>';
+  html += '</div>';
+  if (!all.length) {
+    html += '<div class="alert info" style="text-align:center">Aún no hay pollas. ¡Sé el primero!</div>';
+  } else {
+    if (!state.resultados || !state.resultados.champion) {
+      html += '<div class="alert">⏳ El Mundial inicia el <strong>11 de junio 2026</strong>. Los puntos se actualizarán automáticamente.</div>';
+    } else if (state.resultados.lastUpdated) {
+      const d = new Date(state.resultados.lastUpdated);
+      html += `<div class="alert success" style="font-size:12px">✅ Última actualización: ${d.toLocaleString('es')}</div>`;
+    }
+    if (!paid.length) {
+      html += '<div class="alert info" style="text-align:center">Aún no hay pollas confirmadas.</div>';
+    } else {
+      html += paid.map((p,i) => {
+        const rank = i+1;
+        const emoji = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank+'°';
+        const cls = rank===1?'r1':rank===2?'r2':rank===3?'r3':'';
+        return `<div class="lb-row" style="cursor:pointer" onclick="showPollaDetail('${p.id}')">
+          <div class="lb-rank ${cls}">${emoji}</div>
+          <div class="lb-info">
+            <div class="lb-name">${p.userName}<span class="pay-dot pdg"></span></div>
+            <div class="lb-meta">${p.pollaNr?'Polla #'+p.pollaNr+' | ':''} 🏆 ${fl(p.champion)||'—'} | ⚽ ${p.topScorer||'—'}</div>
+          </div>
+          <div class="lb-pts">${p.points||0}<div style="font-size:10px;color:var(--muted);font-weight:400">pts</div></div>
+        </div>`;
+      }).join('');
+    }
+    if (unpaid.length) {
+      html += `<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:13px;color:var(--muted);font-weight:700;margin-bottom:8px">⏳ PENDIENTES DE PAGO (${unpaid.length})</div>
+        ${unpaid.map(p=>`<div class="lb-row" style="opacity:.5">
+          <div class="lb-rank" style="font-size:12px">💵</div>
+          <div class="lb-info">
+            <div class="lb-name">${p.userName}<span class="pay-dot pdr"></span></div>
+            <div class="lb-meta">${p.pollaNr?'Polla #'+p.pollaNr+' · ':''}Pendiente de pago</div>
+          </div>
+          <div class="lb-pts" style="font-size:12px;color:var(--muted)">—</div>
+        </div>`).join('')}
+      </div>`;
+    }
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ============================================================
+// TODAS LAS POLLAS
+// ============================================================
+function renderTodas() {
+  const el = document.getElementById('pageTodas');
+  if (!userHasPaid()) {
+    el.innerHTML = `
+      <div class="card" style="text-align:center;padding:32px">
+        <div style="font-size:54px;margin-bottom:12px">🔒</div>
+        <div class="card-title" style="justify-content:center">Contenido bloqueado</div>
+        <div class="alert" style="margin:16px 0">
+          Para ver las predicciones de todos los participantes debes haber <strong>confirmado tu pago de $${GC?.price||3}</strong> con el administrador.
+        </div>
+        <div style="background:#0a1a0a;border:2px solid var(--green);border-radius:10px;padding:14px;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px">💳 ${GLOBAL_BANK.name}</div>
+          <div style="font-size:20px;font-weight:900;letter-spacing:2px">${GLOBAL_BANK.account}</div>
+          <div style="font-size:13px;color:var(--muted)">${GLOBAL_BANK.holder}</div>
+        </div>
+        <div class="muted" style="font-size:13px">Una vez que el administrador confirme tu pago se desbloqueará automáticamente.</div>
+      </div>`;
+    return;
+  }
+  const all = Object.values(state.pollas).sort((a,b) => (b.points||0)-(a.points||0));
+  let html = '<div class="card"><div class="card-title">👥 Pollas de Todos';
+  if (firebaseOK) html += ' <span class="live-badge" style="font-size:11px"><span class="live-dot"></span>LIVE</span>';
+  html += `</div>
+    ${all.length > 3 ? `<input type="text" id="searchQ" placeholder="🔍 Buscar nombre..." style="margin-bottom:12px" oninput="filterAll(this.value)">` : ''}
+    <div id="allList">${renderAllList(all)}</div>
+  </div>`;
+  el.innerHTML = html;
+}
+
+function renderAllList(list) {
+  if (!list.length) return '<div class="alert info" style="text-align:center">No hay pollas registradas todavía.</div>';
+  return list.map(p => `
+    <div class="lb-row" style="cursor:pointer" onclick="showPollaDetail('${p.id}')">
+      <div class="lb-info">
+        <div class="lb-name">${p.userName} ${p.pollaNr?`<span class="tag tm" style="font-size:10px">Polla #${p.pollaNr}</span>`:''}</div>
+        <div class="lb-meta">🏆 ${p.champion||'—'} | ⚽ ${p.topScorer||'—'}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lb-pts" style="font-size:16px">${p.points||0} pts</div>
+        <span class="pay-dot ${p.paid?'pdg':'pdr'}"></span>
+      </div>
+    </div>`).join('');
+}
+
+window.filterAll = q => {
+  const all = Object.values(state.pollas).filter(p =>
+    !q || p.userName.toLowerCase().includes(q.toLowerCase())
+  ).sort((a,b) => (b.points||0)-(a.points||0));
+  const el = document.getElementById('allList');
+  if (el) el.innerHTML = renderAllList(all);
+};
+
+// ============================================================
+// POLLA DETAIL MODAL
+// ============================================================
+window.showPollaDetail = id => {
+  const p = state.pollas[id];
+  if (!p) return;
+  const res = state.resultados;
+  const ck = (actual, pred) => actual && pred && actual === pred ? '✅' : '';
+  showOverlay(`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2>${p.userName}</h2>
+      <span class="tag ${p.paid?'tg':'tr'}">${p.paid?'✓ Pagó':'✗ Debe'}</span>
+    </div>
+    ${p.pollaNr?`<div class="muted" style="margin-bottom:10px">Polla #${p.pollaNr}</div>`:''}
+    <div class="champ-box">
+      <div class="champ-trophy">🏆</div>
+      <div class="champ-label">Campeón predicho</div>
+      <div class="champ-name">${p.champion||'—'} ${ck(res?.champion, p.champion)}</div>
+    </div>
+    <div class="summary-row"><span class="muted">Subcampeón</span><span style="font-weight:700">${p.second||'—'} ${ck(res?.second,p.second)}</span></div>
+    <div class="summary-row"><span class="muted">3er puesto</span><span style="font-weight:700">${p.third||'—'} ${ck(res?.third,p.third)}</span></div>
+    <div class="summary-row"><span class="muted">4to puesto</span><span style="font-weight:700">${p.fourth||'—'} ${ck(res?.fourth,p.fourth)}</span></div>
+    <div class="summary-row"><span class="muted">Goleador ⚽</span><span style="font-weight:700">${p.topScorer||'—'} ${res?.topScorer&&p.topScorer&&res.topScorer.toLowerCase()===p.topScorer.toLowerCase()?'✅':''}</span></div>
+    <div class="summary-row"><span class="muted"><strong>Puntos</strong></span><span class="gold" style="font-weight:900;font-size:18px">${p.points||0} pts</span></div>
+    ${p.terceros?.length ? `
+      <div class="divider"></div>
+      <div class="muted" style="margin-bottom:6px">8 Mejores Terceros elegidos:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${p.terceros.map(g=>`<span class="tag tm">${p.grupos&&p.grupos[g]?.p3||'3°'+g}</span>`).join('')}
+      </div>` : ''}
+    <button class="btn btn-outline" style="margin-top:14px" onclick="hideOverlay()">Cerrar</button>
+  `);
+};
+
+// ============================================================
+// MIS POLLAS
+// ============================================================
+function renderMias() {
+  const el = document.getElementById('pageMias');
+  if (!state.user) { el.innerHTML = '<div class="alert">Inicia sesión primero.</div>'; return; }
+  const mine = Object.values(state.pollas)
+    .filter(p => p.userName === state.user.name)
+    .sort((a,b) => (a.pollaNr||0)-(b.pollaNr||0));
+  const res = state.resultados;
+  const ck = (a,b) => a&&b&&a===b?'✅':'';
+  let html = '<div class="card"><div class="card-title">📋 Mis Pollas</div>';
+  if (!mine.length) {
+    html += '<div class="alert info" style="text-align:center">Sin pollas todavía.</div>';
+    html += '<button class="btn btn-red" onclick="showPage(\'nueva\')">➕ Crear Polla</button>';
+  } else {
+    html += mine.map(p => `
+      <div class="card" style="margin-bottom:10px;padding:13px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <strong>Polla #${p.pollaNr||'?'}</strong>
+          <span class="tag ${p.paid?'tg':'tr'}">${p.paid?'✓ Pagó $'+(GC?.price||3):'✗ Debe $'+(GC?.price||3)}</span>
+        </div>
+        <div class="summary-row"><span class="muted">Campeón</span><span style="font-weight:700">${p.champion||'—'} ${ck(res?.champion,p.champion)}</span></div>
+        <div class="summary-row"><span class="muted">Subcampeón</span><span style="font-weight:700">${p.second||'—'} ${ck(res?.second,p.second)}</span></div>
+        <div class="summary-row"><span class="muted">3er puesto</span><span style="font-weight:700">${p.third||'—'} ${ck(res?.third,p.third)}</span></div>
+        <div class="summary-row"><span class="muted">Goleador</span><span style="font-weight:700">${p.topScorer||'—'} ${res?.topScorer&&p.topScorer&&res.topScorer.toLowerCase()===p.topScorer?.toLowerCase()?'✅':''}</span></div>
+        <div class="summary-row"><span><strong>Puntos</strong></span><span class="gold" style="font-weight:900;font-size:18px">${p.points||0} pts</span></div>
+      </div>`).join('');
+    html += `<button class="btn btn-red" style="margin-top:4px" onclick="showPage('nueva')">➕ Nueva Polla ($${GC?.price||3})</button>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ============================================================
+// NUEVA POLLA — WIZARD
+// ============================================================
+const STEPS = ['grupos','r32','r16','qf','sf','final','goleador'];
+
+function startDraft() {
+  const cnt = Object.values(state.pollas).filter(p => p.userName === state.user?.name).length;
+  draft = {
+    id: uid(), userName: state.user?.name, pollaNr: cnt+1,
+    paid: false, grupos: {}, terceros: [],
+    picks: {r32:{}, r16:{}, qf:{}, sf:{}},
+    bracket: {r32:[],r16:[],qf:[],sf:[]},
+    champion:null, second:null, third:null, fourth:null,
+    topScorer:'', points:0, step:0
+  };
+}
+
+function renderNueva() {
+  const el = document.getElementById('pageNueva');
+  if (!state.user) {
+    el.innerHTML = '<div class="alert">Inicia sesión primero.</div><button class="btn btn-red" onclick="showPage(\'home\')">Ir a Inicio</button>';
+    return;
+  }
+  if (!draft) startDraft();
+  renderStep();
+}
+
+function renderStep() {
+  const el = document.getElementById('pageNueva');
+  const lbl = ['Grupos','16avos','8avos','Cuartos','Semis','Final','Goleador'];
+  const stBar = `<div class="steps-bar">${lbl.map((l,i)=>
+    `<div class="step-dot ${i<draft.step?'done':i===draft.step?'active':''}">${i<draft.step?'✓':i+1}</div>${i<lbl.length-1?'<div class="step-line"></div>':''}`
+  ).join('')}</div>`;
+  let content = '';
+  if      (draft.step === 0) content = stepGrupos();
+  else if (draft.step >= 1 && draft.step <= 4) content = stepBracket();
+  else if (draft.step === 5) content = stepFinal();
+  else if (draft.step === 6) content = stepGoleador();
+  el.innerHTML = stBar + content;
+  attachGroupEvents();
+  const si = document.getElementById('scorerInput');
+  if (si) {
+    si.addEventListener('input', () => {
+      draft.topScorer = si.value.trim();
+      debounceScorerPhoto(si.value.trim());
+    });
+    if (draft.topScorer) debounceScorerPhoto(draft.topScorer);
+  }
+}
+
+function stepGrupos() {
+  const firstSec = Object.values(draft.grupos).reduce((a,g)=>a+(g.p1?1:0)+(g.p2?1:0),0);
+  const tercCnt  = draft.terceros.length;
+  const totalR32 = firstSec + tercCnt;
+  const allGroups12 = Object.keys(GROUPS).every(g => { const pg = draft.grupos[g]; return pg && pg.p1 && pg.p2; });
+  const allDone  = allGroups12 && tercCnt === 8;
+  return `
+    <div class="card">
+      <div class="card-title">Paso 1: Clasifica los Grupos</div>
+      <div class="alert info" style="font-size:13px">
+        Toca los equipos en orden: 1° toque = <strong style="color:var(--gold)">1°</strong>,
+        2° = <strong style="color:#6060ee">2°</strong>,
+        3° = <strong style="color:#886644">3°</strong> (3° solo para los 8 terceros que clasifican).
+        Toca de nuevo para quitar.
+      </div>
+    </div>
+    <div class="counter-bar" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <div style="display:flex;justify-content:space-between;width:100%">
+        <span>Seleccionados al R32</span>
+        <span class="counter-num">${totalR32} / 32</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;width:100%">
+        <span style="font-size:13px;color:var(--muted)">Terceros clasificados</span>
+        <span style="font-size:16px;font-weight:700;color:${tercCnt===8?'var(--green)':'var(--gold2)'}">${tercCnt} / 8</span>
+      </div>
+    </div>
+    <div class="group-grid">
+      ${Object.keys(GROUPS).sort().map(g => {
+        const pg = draft.grupos[g] || {};
+        const tercerosFull = tercCnt >= 8 && !draft.terceros.includes(g);
+        return `<div class="group-card"><div class="group-label">Grupo ${g}</div>
+          ${GROUPS[g].map(team => {
+            const isp1 = pg.p1===team, isp2 = pg.p2===team, isp3 = pg.p3===team;
+            const cls  = isp1?'sel-1':isp2?'sel-2':isp3?'sel-3':'';
+            const badge= isp1?'<span class="pos-badge p1">1°</span>':
+                         isp2?'<span class="pos-badge p2">2°</span>':
+                         isp3?'<span class="pos-badge p3">3°</span>':'';
+            const wouldBeP3 = !badge && pg.p1 && pg.p2 && !pg.p3;
+            const blocked = (!badge && pg.p1 && pg.p2 && pg.p3) || (wouldBeP3 && tercerosFull);
+            const flag = FLAGS[team] ? `<span style="font-size:18px;line-height:1">${FLAGS[team]}</span>` : '';
+            return `<button class="team-btn ${cls} ${blocked?'blocked':''}" data-g="${g}" data-t="${team}" ${blocked?'disabled':''}>${badge}${flag}${team}</button>`;
+          }).join('')}
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-gold" onclick="nextStep()" ${!allDone?'disabled':''}>
+        Continuar a 16avos de Final ▶
+      </button>
+      ${!allDone?`<div class="muted" style="text-align:center;margin-top:7px">${!allGroups12?'Completa 1° y 2° de los 12 grupos':'Elige exactamente 8 terceros'}</div>`:''}
+    </div>`;
+}
+
+function stepTerceros() {
+  const cnt = draft.terceros.length;
+  return `
+    <div class="card">
+      <div class="card-title">Paso 2: Elige los 8 Mejores Terceros</div>
+      <div class="alert info" style="font-size:13px">
+        De 12 terceros, solo <strong>8</strong> clasifican. Elige los 8 grupos cuyo 3° crees que pasa.
+      </div>
+    </div>
+    <div class="counter-bar">
+      <span>Terceros elegidos</span><span class="counter-num">${cnt} / 8</span>
+    </div>
+    <div class="group-grid">
+      ${Object.keys(GROUPS).sort().map(g => {
+        const team3 = draft.grupos[g]?.p3 || '?';
+        const chosen = draft.terceros.includes(g);
+        const blocked = !chosen && cnt >= 8;
+        return `<div class="group-card" style="cursor:pointer;${chosen?'border-color:var(--gold);border-width:2px':''};border:2px solid ${chosen?'var(--gold)':'var(--border)'}"
+          onclick="${blocked?'':("toggleTercero('"+g+"')")}">
+          <div class="group-label" style="color:${chosen?'var(--gold)':'var(--muted)'}">3° Grupo ${g}</div>
+          <div style="font-size:15px;font-weight:700;color:${chosen?'var(--gold)':'#fff'};padding:7px 0;text-align:center">
+            ${chosen?'✓ ':''}${team3}
+          </div>
+          ${chosen?'<div style="font-size:10px;color:var(--gold);text-align:center">CLASIFICADO</div>':''}
+          ${blocked?'<div style="font-size:10px;color:var(--muted);text-align:center">bloqueado</div>':''}
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-outline btn-sm" style="width:auto;margin-bottom:8px" onclick="prevStep()">◀ Volver</button>
+      <button class="btn btn-gold" onclick="nextStep()" ${cnt!==8?'disabled':''}>
+        Ver Ronda de 16avos ▶
+      </button>
+      ${cnt!==8?'<div class="muted" style="text-align:center;margin-top:7px">Elige exactamente 8</div>':''}
+    </div>`;
+}
+
+window.toggleTercero = g => {
+  const i = draft.terceros.indexOf(g);
+  if (i >= 0) draft.terceros.splice(i,1);
+  else if (draft.terceros.length < 8) draft.terceros.push(g);
+  renderStep();
+};
+
+function getThirdsFor(matchId) {
+  const slots = ['m74','m77','m79','m80','m81','m82','m85','m87'];
+  const sorted = [...draft.terceros].sort();
+  const idx = slots.indexOf(matchId);
+  const g = sorted[idx];
+  return g && draft.grupos[g]?.p3 || null;
+}
+
+function resolvePos(pos) {
+  const rank = pos[0], grp = pos.slice(1);
+  const pg = draft.grupos[grp];
+  if (!pg) return null;
+  return rank==='1'?pg.p1:rank==='2'?pg.p2:null;
+}
+
+function getR32Teams(def) {
+  if (def.a === '3X') return {home: resolvePos(def.h), away: getThirdsFor(def.id)};
+  if (def.h === '3X') return {home: getThirdsFor(def.id), away: resolvePos(def.a)};
+  return {home: resolvePos(def.h), away: resolvePos(def.a)};
+}
+
+function getMatchWinner(matchId, round) {
+  return draft.picks[round]?.[matchId] || null;
+}
+
+function stepBracket() {
+  const rounds = ['r32','r16','qf','sf'];
+  const names  = ['16avos de Final','8avos de Final','Cuartos de Final','Semifinal'];
+  const defs   = [R32_DEF, R16_DEF, QF_DEF, SF_DEF];
+  const ri     = draft.step - 1;
+  const round  = rounds[ri];
+  const dlist  = defs[ri];
+  const prev   = rounds[ri-1];
+
+  let html = `<div class="card"><div class="card-title">Ronda de ${names[ri]}</div>
+    <div class="alert info" style="font-size:13px">Elige el ganador de cada partido.</div></div>`;
+
+  let allPicked = true;
+  for (const def of dlist) {
+    let home, away;
+    if (round==='r32') { const t = getR32Teams(def); home=t.home; away=t.away; }
+    else { home=getMatchWinner(def.m1,prev); away=getMatchWinner(def.m2,prev); }
+    const winner = draft.picks[round]?.[def.id];
+    if (!winner) allPicked = false;
+    html += `<div class="match-row">
+      <div class="match-num">${def.id.toUpperCase()}</div>
+      <div class="match-teams">
+        <button class="match-team ${winner===home?'winner':winner&&home?'loser':''} ${!home?'tbd':''}"
+          ${!home?'disabled':''} onclick="pickWin('${round}','${def.id}','${(home||'').replace(/'/g,"\\'")}')">
+          ${home ? fl(home) : 'Por definir…'}
+        </button>
+        <div class="match-vs">vs</div>
+        <button class="match-team ${winner===away?'winner':winner&&away?'loser':''} ${!away?'tbd':''}"
+          ${!away?'disabled':''} onclick="pickWin('${round}','${def.id}','${(away||'').replace(/'/g,"\\'")}')">
+          ${away ? fl(away) : 'Por definir…'}
+        </button>
+      </div>
+    </div>`;
+  }
+  html += `<div style="margin-top:16px">
+    <button class="btn btn-outline btn-sm" style="width:auto;margin-bottom:8px" onclick="prevStep()">◀ Volver</button>
+    <button class="btn btn-gold" onclick="nextStep()" ${!allPicked?'disabled':''}>${draft.step===5?'Ver Final ▶':'Continuar ▶'}</button>
+    ${!allPicked?'<div class="muted" style="text-align:center;margin-top:7px">Elige todos los ganadores</div>':''}
+  </div>`;
+  return html;
+}
+
+window.pickWin = (round, matchId, team) => {
+  if (!team) return;
+  draft.picks[round][matchId] = team;
+  const order = ['r32','r16','qf','sf'];
+  const idx = order.indexOf(round);
+  for (let i=idx+1;i<order.length;i++) draft.picks[order[i]] = {};
+  draft.champion = draft.second = draft.third = draft.fourth = null;
+  renderStep();
+};
+
+function stepFinal() {
+  const sf1w = draft.picks.sf?.sf1;
+  const sf2w = draft.picks.sf?.sf2;
+  const sfDefs = {sf1: SF_DEF[0], sf2: SF_DEF[1]};
+  const getLsf = (sfId) => {
+    const w = draft.picks.sf?.[sfId];
+    const d = sfDefs[sfId];
+    if (!w) return null;
+    const a = getMatchWinner(d.m1,'qf');
+    const b = getMatchWinner(d.m2,'qf');
+    return a===w ? b : a;
+  };
+  const sf1l = getLsf('sf1'), sf2l = getLsf('sf2');
+  const ch = draft.champion, trd = draft.third;
+
+  const finalMatch = (home, away, winField, losField, label) => {
+    const winner = draft[winField];
+    return `<div class="match-row">
+      <div class="match-num">${label}</div>
+      <div class="match-teams">
+        <button class="match-team ${winner===home?'winner':winner&&home?'loser':''} ${!home?'tbd':''}"
+          ${!home?'disabled':''} onclick="setFinal('${(home||'').replace(/'/g,"\\'")}','${(away||'').replace(/'/g,"\\'")}','${winField}','${losField}')">
+          ${home ? fl(home) : 'Por definir…'}
+        </button>
+        <div class="match-vs">vs</div>
+        <button class="match-team ${winner===away?'winner':winner&&away?'loser':''} ${!away?'tbd':''}"
+          ${!away?'disabled':''} onclick="setFinal('${(away||'').replace(/'/g,"\\'")}','${(home||'').replace(/'/g,"\\'")}','${winField}','${losField}')">
+          ${away ? fl(away) : 'Por definir…'}
+        </button>
+      </div>
+    </div>`;
+  };
+
+  let html = `<div class="card"><div class="card-title">Gran Final & 3er Puesto</div></div>
+    <div class="round-title">🏆 GRAN FINAL</div>
+    ${finalMatch(sf1w, sf2w, 'champion', 'second', 'FINAL')}
+    ${ch?`<div class="champ-box"><div class="champ-trophy">🏆</div><div class="champ-label">Tu Campeón Predicho</div><div class="champ-name">${fl(ch)}</div></div>`:''}
+    <div class="round-title">🥉 TERCER PUESTO</div>
+    ${finalMatch(sf1l, sf2l, 'third', 'fourth', '3°/4°')}
+    <div style="margin-top:16px">
+      <button class="btn btn-outline btn-sm" style="width:auto;margin-bottom:8px" onclick="prevStep()">◀ Volver</button>
+      <button class="btn btn-gold" onclick="nextStep()" ${!ch||!draft.third?'disabled':''}>Continuar al Goleador ▶</button>
+    </div>`;
+  return html;
+}
+
+window.setFinal = (winner, loser, wf, lf) => {
+  draft[wf] = winner; draft[lf] = loser; renderStep();
+};
+
+function stepGoleador() {
+  return `
+    <div class="card">
+      <div class="card-title">⚽ Goleador del Torneo</div>
+      <div class="alert info" style="font-size:13px">
+        ¿Quién será el máximo goleador del Mundial 2026?
+        <strong style="color:var(--gold)">+5 puntos bonus</strong> si aciertas.
+      </div>
+      <div id="scorerPhotoWrap" style="text-align:center;margin:12px 0;min-height:0">
+        <img id="scorerPhoto" src="" alt="" style="display:none;width:120px;height:140px;object-fit:cover;object-position:top;border-radius:14px;border:3px solid var(--gold);box-shadow:0 0 18px rgba(255,215,0,.3)">
+        <div id="scorerPhotoLoading" style="display:none;color:var(--muted);font-size:13px;margin-top:6px">Buscando foto…</div>
+      </div>
+      <label class="muted" style="display:block;margin-bottom:5px">Nombre del jugador:</label>
+      <input type="text" id="scorerInput" placeholder="Ej: Lionel Messi" value="${draft.topScorer||''}" style="font-size:19px" autocomplete="off">
+    </div>
+    <div class="card">
+      <div class="card-title">Resumen de tu Polla</div>
+      <div class="summary-row"><span class="muted">Campeón 🏆</span><span class="gold" style="font-weight:700">${fl(draft.champion)||'—'}</span></div>
+      <div class="summary-row"><span class="muted">Subcampeón</span><span style="font-weight:700">${fl(draft.second)||'—'}</span></div>
+      <div class="summary-row"><span class="muted">3er Puesto</span><span style="font-weight:700">${fl(draft.third)||'—'}</span></div>
+      <div class="summary-row"><span class="muted">4to Puesto</span><span style="font-weight:700">${fl(draft.fourth)||'—'}</span></div>
+    </div>
+    <div style="background:#0a1a0a;border:2px solid var(--green);border-radius:10px;padding:14px;margin-top:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">💳 Paga $${GC?.price||3} — ${GLOBAL_BANK.name}</div>
+      <div style="font-size:18px;font-weight:900;letter-spacing:2px;color:#fff;margin-bottom:3px">${GLOBAL_BANK.account}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">${GLOBAL_BANK.holder}</div>
+      <label class="muted" style="display:block;margin-bottom:6px;font-size:13px">📎 Sube la foto del comprobante:</label>
+      <input type="file" id="comprobanteInput" accept="image/*" capture="environment"
+        style="display:none" onchange="previewComprobante(this)">
+      <button class="btn btn-blue" style="margin-bottom:10px" onclick="document.getElementById('comprobanteInput').click()">
+        📷 ${draft.comprobante ? '✅ Foto cargada — toca para cambiar' : 'Subir foto del comprobante'}
+      </button>
+      ${draft.comprobante
+        ? `<div style="text-align:center"><img src="${draft.comprobante}" style="max-width:100%;max-height:220px;border-radius:10px;border:2px solid var(--green)"></div>`
+        : '<div id="comprobantePreview" style="text-align:center"></div>'
+      }
+    </div>
+    <button class="btn btn-outline btn-sm" style="width:auto;margin-bottom:8px;margin-top:12px" onclick="prevStep()">◀ Volver</button>
+    <button class="btn btn-gold" onclick="savePolla()">✅ GUARDAR MI POLLA ($${GC?.price||3})</button>`;
+}
+
+window.previewComprobante = input => {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    // Compress image before storing
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      const ratio = Math.min(MAX/img.width, MAX/img.height, 1);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.75);
+      draft.comprobante = compressed;
+      // Show preview
+      const prev = document.getElementById('comprobantePreview');
+      if (prev) prev.innerHTML = `<img src="${compressed}" style="max-width:100%;max-height:220px;border-radius:10px;border:2px solid var(--green);margin-top:6px">`;
+      // Update button text
+      const btn = input.previousElementSibling;
+      if (btn) btn.innerHTML = '📷 ✅ Foto cargada — toca para cambiar';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+let _photoTimer;
+function debounceScorerPhoto(name) {
+  clearTimeout(_photoTimer);
+  const img = document.getElementById('scorerPhoto');
+  const lbl = document.getElementById('scorerPhotoLoading');
+  if (!name || name.length < 3) {
+    if (img) { img.style.display='none'; img.src=''; }
+    if (lbl) lbl.style.display='none';
+    return;
+  }
+  if (lbl) lbl.style.display='block';
+  _photoTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name)}&prop=pageimages&format=json&pithumbsize=300&origin=*`
+      );
+      const d = await r.json();
+      const src = Object.values(d.query.pages)[0]?.thumbnail?.source || '';
+      if (img) { img.src = src; img.style.display = src ? 'block' : 'none'; }
+    } catch { if (img) img.style.display='none'; }
+    if (lbl) lbl.style.display='none';
+  }, 700);
+}
+
+function attachGroupEvents() {
+  document.querySelectorAll('.team-btn[data-g]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.g, team = btn.dataset.t;
+      const pg = draft.grupos[g] = draft.grupos[g] || {};
+      if      (pg.p1===team) pg.p1 = null;
+      else if (pg.p2===team) pg.p2 = null;
+      else if (pg.p3===team) { pg.p3 = null; }
+      else if (!pg.p1) pg.p1 = team;
+      else if (!pg.p2) pg.p2 = team;
+      else if (!pg.p3 && draft.terceros.length < 8) pg.p3 = team;
+      // sync terceros: add group if it has p3, remove if not
+      if (pg.p3 && !draft.terceros.includes(g)) draft.terceros.push(g);
+      draft.terceros = draft.terceros.filter(tg => draft.grupos[tg]?.p3);
+      renderStep();
+    });
+  });
+}
+
+window.nextStep = () => { draft.step = Math.min(draft.step+1, STEPS.length-1); renderStep(); window.scrollTo(0,0); };
+window.prevStep = () => { draft.step = Math.max(draft.step-1, 0); renderStep(); window.scrollTo(0,0); };
+
+window.savePolla = () => {
+  const si = document.getElementById('scorerInput');
+  if (si) draft.topScorer = si.value.trim();
+  // comprobante photo already saved in draft.comprobante via previewComprobante()
+  if (!draft.champion) { toast('⚠️ Elige el campeón'); return; }
+  if (!draft.topScorer) { toast('⚠️ Escribe el goleador'); return; }
+  draft.bracket = {
+    r32: Object.values(draft.picks.r32||{}),
+    r16: Object.values(draft.picks.r16||{}),
+    qf:  Object.values(draft.picks.qf||{}),
+    sf:  Object.values(draft.picks.sf||{})
+  };
+  const polla = {...draft}; delete polla.step;
+  if (state.resultados) polla.points = calcPoints(polla, state.resultados);
+  state.pollas[polla.id] = polla;
+  saveData();
+  draft = null;
+  toast(`✅ ¡Polla guardada! Avisa al admin para confirmar tu pago de $${GC?.price||3} 💵`);
+  showPage('mias');
+};
+
+// ============================================================
+// ADMIN
+// ============================================================
+function renderAdmin() {
+  if (!state.user?.isAdmin) {
+    document.getElementById('pageAdmin').innerHTML = '<div class="alert error">Acceso restringido.</div>';
+    return;
+  }
+  const el = document.getElementById('pageAdmin');
+  const all = Object.values(state.pollas);
+  const paid = all.filter(p=>p.paid).length;
+  const res = state.resultados || {};
+
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">🔑 Panel Admin — ${GLOBAL_ADMIN}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px">
+        <div class="stat-box"><div class="stat-num gold">${all.length}</div><div class="stat-lbl">Pollas</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)">${paid}</div><div class="stat-lbl">Pagaron</div></div>
+        <div class="stat-box"><div class="stat-num gold">$${paid*(GC?.price||3)}</div><div class="stat-lbl">Recaudado</div></div>
+      </div>
+    </div>
+
+    <!-- PAGOS -->
+    <div class="card">
+      <div class="card-title">💰 Estado de Pagos</div>
+      <div style="overflow-x:auto">
+        <table class="atbl"><thead><tr>
+          <th>Nombre</th><th>Pollas</th><th>Debe</th><th>Comprobante</th><th>Estado</th><th>Borrar</th>
+        </tr></thead><tbody id="payTbl"></tbody></table>
+      </div>
+    </div>
+
+    <!-- API SYNC -->
+    <div class="card">
+      <div class="card-title">🔄 Sincronización con el Mundial</div>
+      <div class="alert info" style="font-size:13px;margin-bottom:10px">
+        Los resultados se obtienen automáticamente de <strong>API-Football</strong> cada 10 minutos
+        cuando esta página esté abierta. También puedes sincronizar manualmente.
+        <br><br>
+        ⚠️ <strong>API-Football</strong> sincroniza resultados automáticamente (plan Free, 100 llamadas/día).
+      </div>
+      <div id="apiStatus" style="font-size:13px;color:var(--muted);margin-bottom:10px;min-height:20px">Listo para sincronizar.</div>
+      <button class="btn btn-blue" onclick="fetchWorldCupResults()">🔄 SINCRONIZAR RESULTADOS AHORA</button>
+      <button class="btn btn-green" style="margin-top:8px" onclick="startAutoSync()">▶ ACTIVAR SYNC AUTOMÁTICO (cada 10 min)</button>
+    </div>
+
+    <!-- RESULTADOS MANUAL -->
+    <div class="card">
+      <div class="card-title">✏️ Editar Resultados Manualmente</div>
+      <div class="alert info" style="font-size:12px;margin-bottom:10px">
+        Puedes editar los resultados aquí si la API no los tiene todavía.
+      </div>
+      <strong class="gold">Campeón:</strong>
+      <input id="rChamp" placeholder="Campeón" value="${res.champion||''}">
+      <strong class="gold">Subcampeón:</strong>
+      <input id="rSecond" placeholder="Subcampeón" value="${res.second||''}">
+      <strong class="gold">3er Puesto:</strong>
+      <input id="rThird" placeholder="3er puesto" value="${res.third||''}">
+      <strong class="gold">4to Puesto:</strong>
+      <input id="rFourth" placeholder="4to puesto" value="${res.fourth||''}">
+      <strong class="gold">Goleador:</strong>
+      <input id="rScorer" placeholder="Goleador del torneo" value="${res.topScorer||''}">
+      <button class="btn btn-green" onclick="saveManualResults()">💾 GUARDAR</button>
+      ${res.lastUpdated ? `<div class="muted" style="margin-top:8px">Última actualización: ${new Date(res.lastUpdated).toLocaleString('es')}</div>` : ''}
+    </div>
+  `;
+
+  renderPayTable();
+}
+
+function renderPayTable() {
+  const tb = document.getElementById('payTbl');
+  if (!tb) return;
+  const users = {};
+  for (const p of Object.values(state.pollas)) {
+    if (!users[p.userName]) users[p.userName] = {name:p.userName, cnt:0, paidCnt:0, comprobantes:[]};
+    users[p.userName].cnt++;
+    if (p.paid) users[p.userName].paidCnt++;
+    if (p.comprobante) users[p.userName].comprobantes.push({img: p.comprobante, polla: p.pollaNr||'?'});
+  }
+  tb.innerHTML = Object.values(users).map(u => {
+    const owes = (u.cnt - u.paidCnt) * (GC?.price||3);
+    const comp = u.comprobantes.length
+      ? u.comprobantes.map(c=>`<a href="${c.img}" target="_blank"><img src="${c.img}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:2px solid var(--green);margin-right:4px" title="Polla #${c.polla}"></a>`).join('')
+      : '<span style="color:var(--muted)">—</span>';
+    return `<tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.cnt}</td>
+      <td>${owes>0?'$'+owes:'—'}</td>
+      <td style="font-size:12px;color:var(--gold)">${comp}</td>
+      <td><button class="btn btn-sm ${u.paidCnt===u.cnt?'btn-green':'btn-red'}"
+        onclick="togglePaid('${u.name.replace(/'/g,"\\'")}')">
+        ${u.paidCnt===u.cnt?'✓ Pagó':'✗ Debe'}
+      </button></td>
+      <td><button class="btn btn-sm" style="background:#5a0000;color:#fff"
+        onclick="deleteUser('${u.name.replace(/'/g,"\\'")}')">🗑️</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted)">Sin participantes todavía</td></tr>';
+}
+
+window.togglePaid = name => {
+  const pollas = Object.values(state.pollas).filter(p => p.userName === name);
+  const allPaid = pollas.every(p => p.paid);
+  pollas.forEach(p => { state.pollas[p.id].paid = !allPaid; });
+  saveData();
+  window.scrollTo(0,0);
+  renderAdmin();
+  toast(allPaid ? '🔴 Marcado: Debe' : '🟢 Marcado: Pagó');
+};
+
+window.deleteUser = name => {
+  if (!confirm(`¿Borrar TODAS las pollas de "${name}"? Esta acción no se puede deshacer.`)) return;
+  const ids = Object.keys(state.pollas).filter(id => state.pollas[id].userName === name);
+  ids.forEach(id => {
+    delete state.pollas[id];
+    if (firebaseOK) db.ref(gRef('pollas/'+id)).remove();
+  });
+  saveData();
+  window.scrollTo(0,0);
+  renderAdmin();
+  toast(`🗑️ Pollas de "${name}" eliminadas`);
+};
+
+window.deletePolla = id => {
+  if (!confirm('¿Borrar esta polla?')) return;
+  const name = state.pollas[id]?.userName;
+  delete state.pollas[id];
+  if (firebaseOK) db.ref(gRef('pollas/'+id)).remove();
+  saveData();
+  window.scrollTo(0,0);
+  renderAdmin();
+  toast(`🗑️ Polla eliminada`);
+};
+
+window.saveManualResults = () => {
+  const g = id => (document.getElementById(id)||{}).value?.trim()||'';
+  const newRes = {
+    champion: g('rChamp'), second: g('rSecond'),
+    third: g('rThird'), fourth: g('rFourth'),
+    topScorer: g('rScorer'),
+    bracket: state.resultados?.bracket || {},
+    lastUpdated: new Date().toISOString()
+  };
+  state.resultados = newRes;
+  recalcAll(true);
+  toast('✅ Resultados guardados');
+  window.scrollTo(0,0);
+  renderAdmin();
+  renderTabla();
+};
+
+// ============================================================
+// RENDER MAP & INIT
+// ============================================================
+const renders = {
+  home: renderHome, tabla: renderTabla, todas: renderTodas,
+  mias: renderMias, nueva: renderNueva, admin: renderAdmin
+};
+
+async function migrateFamily() {
+  if (!firebaseOK || !db) return;
+  const snap = await db.ref('/groups/cooperativa-familiar/config').once('value');
+  if (snap.exists()) return; // already migrated
+  // Create family group
+  await db.ref('/groups/cooperativa-familiar/config').set({
+    name: 'Cooperativa Familiar Landazuri Melo',
+    price: 3,
+    createdAt: new Date().toISOString()
+  });
+  // Copy existing pollas
+  const pollasSnap = await db.ref('/pollas').once('value');
+  if (pollasSnap.exists()) {
+    await db.ref('/groups/cooperativa-familiar/pollas').set(pollasSnap.val());
+  }
+  const resSnap = await db.ref('/resultados').once('value');
+  if (resSnap.exists()) {
+    await db.ref('/groups/cooperativa-familiar/resultados').set(resSnap.val());
+  }
+  console.log('✅ Family data migrated');
+}
+
+function init() {
+  initFirebase();
+  migrateFamily();
+}
+
+init();
+</script>
+</body>
+</html>
