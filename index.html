@@ -435,6 +435,7 @@ function initFirebase() {
       });
 
       showPage('home');
+      fetchWorldCupResults(); // carga resultados al abrir la página
     });
   } catch(e) {
     console.error('Firebase:', e);
@@ -471,99 +472,48 @@ function refreshCurrentPage() {
 // ============================================================
 // API-FOOTBALL — SINCRONIZACIÓN AUTOMÁTICA
 // ============================================================
+// URL del intermediario (Val.town) que trae los resultados del Mundial 2026
+// desde football-data.org con CORS habilitado. El token va seguro en el servidor.
+const RESULTS_API_URL = 'https://polla-mundialista-2026-results.val.run/';
+
 async function fetchWorldCupResults() {
   const statusEl = document.getElementById('apiStatus');
   const setStatus = msg => { if(statusEl) statusEl.textContent = msg; };
-  setStatus('🔄 Conectando con API-Football...');
+  setStatus('🔄 Obteniendo resultados del Mundial...');
 
   try {
-    const headers = {
-      'x-apisports-key': API_FOOTBALL_KEY
-    };
-    const base = 'https://v3.football.api-sports.io';
+    const res = await fetch(RESULTS_API_URL, {cache:'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data || data.error) throw new Error(data && data.error ? data.error : 'respuesta vacía');
 
-    // 1. Standings (clasificación grupos)
-    const sRes = await fetch(`${base}/standings?league=${WC_LEAGUE}&season=${WC_SEASON}`, {headers});
-    const sData = await sRes.json();
-    const grupos = {};
-    if (sData.response && sData.response[0]) {
-      const standings = sData.response[0].league.standings;
-      for (const grp of standings) {
-        if (!grp.length) continue;
-        const letter = (grp[0].group || '').replace(/group /i,'').trim().toUpperCase();
-        if (/^[A-L]$/.test(letter)) {
-          grupos[letter] = {
-            p1: grp[0] ? mapTeam(grp[0].team.name) : null,
-            p2: grp[1] ? mapTeam(grp[1].team.name) : null,
-            p3: grp[2] ? mapTeam(grp[2].team.name) : null
-          };
-        }
-      }
+    state.resultados = data;
+    recalcAll(false); // recalcula los puntos localmente
+
+    // Guardar SOLO los resultados (nunca las pollas) para no afectar a nadie
+    if (firebaseOK && db && GID) {
+      db.ref(gRef('resultados')).set(data);
+    } else {
+      localStorage.setItem('pm26_res', JSON.stringify(data));
     }
 
-    // 2. Fixtures terminados
-    const fRes = await fetch(`${base}/fixtures?league=${WC_LEAGUE}&season=${WC_SEASON}&status=FT`, {headers});
-    const fData = await fRes.json();
-    const bracket = {r32:[],r16:[],qf:[],sf:[]};
-    let champion = '', second = '', third = '', fourth = '';
-
-    for (const fix of (fData.response || [])) {
-      const round = (fix.league.round || '').toLowerCase();
-      const homeW = fix.teams.home.winner;
-      const awayW = fix.teams.away.winner;
-      const winner = homeW ? mapTeam(fix.teams.home.name) : awayW ? mapTeam(fix.teams.away.name) : null;
-      const loser  = homeW ? mapTeam(fix.teams.away.name) : awayW ? mapTeam(fix.teams.home.name) : null;
-      if (!winner) continue;
-      if (round.includes('32'))      bracket.r32.push(winner);
-      else if (round.includes('16')) bracket.r16.push(winner);
-      else if (round.includes('quarter')) bracket.qf.push(winner);
-      else if (round.includes('semi'))    bracket.sf.push(winner);
-      else if (round.includes('3rd') || round.includes('third') || round.includes('tercer')) {
-        third = winner; fourth = loser;
-      } else if (round.includes('final')) {
-        champion = winner; second = loser;
-      }
-    }
-
-    // 3. Top scorers
-    let topScorer = state.resultados?.topScorer || '';
-    try {
-      const tRes = await fetch(`${base}/players/topscorers?league=${WC_LEAGUE}&season=${WC_SEASON}`, {headers});
-      const tData = await tRes.json();
-      if (tData.response && tData.response[0]) {
-        topScorer = tData.response[0].player.name;
-      }
-    } catch(_) {}
-
-    const newRes = {
-      grupos,
-      bracket,
-      champion: champion || state.resultados?.champion || '',
-      second:   second   || state.resultados?.second   || '',
-      third:    third    || state.resultados?.third    || '',
-      fourth:   fourth   || state.resultados?.fourth   || '',
-      topScorer,
-      lastUpdated: new Date().toISOString()
-    };
-
-    state.resultados = newRes;
-    recalcAll(true);
+    const grp = data.grupos ? Object.keys(data.grupos).length : 0;
     setStatus('✅ Sincronizado: ' + new Date().toLocaleTimeString('es') +
-              (Object.keys(grupos).length ? ' · ' + Object.keys(grupos).length + ' grupos' : '') +
-              (champion ? ' · Campeón: ' + champion : ''));
-    toast('✅ Resultados actualizados desde API');
-    renderTabla();
+              (grp ? ' · ' + grp + ' grupos' : '') +
+              (data.champion ? ' · Campeón: ' + data.champion : ''));
+    toast('✅ Resultados actualizados');
+    refreshCurrentPage();
 
   } catch(e) {
-    console.error('API error:', e);
-    setStatus('❌ Error API: ' + e.message + '. Verifica tu API key en dashboard.api-football.com');
+    console.error('Resultados API error:', e);
+    setStatus('❌ No se pudieron obtener los resultados: ' + e.message);
   }
 }
 
 function startAutoSync() {
   if (autoSyncTimer) clearInterval(autoSyncTimer);
   fetchWorldCupResults();
-  autoSyncTimer = setInterval(fetchWorldCupResults, 10 * 60 * 1000); // cada 10 min
+  autoSyncTimer = setInterval(fetchWorldCupResults, 15 * 60 * 1000); // cada 15 min
 }
 
 // ============================================================
@@ -593,6 +543,12 @@ function calcPoints(polla, res) {
     for (const rnd of ['r32','r16','qf','sf']) {
       for (const team of (res.bracket[rnd] || [])) {
         if (predPassed(team, rnd)) pts += PTS[rnd];
+      }
+    }
+    // +1 por acertar quién GANA en 16avos (pasa a 8avos)
+    if (res.bracket.r32win && polla.bracket && polla.bracket.r32) {
+      for (const team of res.bracket.r32win) {
+        if (polla.bracket.r32.includes(team)) pts += PTS.r16;
       }
     }
   }
@@ -837,8 +793,9 @@ function renderHome() {
       </div>
       <div class="card">
         <div class="card-title">Sistema de Puntos</div>
-        ${[['Equipo pasa a 16avos','+1 pt'],['Equipo pasa a 8avos','+1 pt'],
-           ['Equipo pasa a cuartos','+1 pt'],['Equipo llega a semis','+1 pt'],
+        ${[['Equipo clasifica a 16avos','+1 pt'],['Equipo gana en 16avos (pasa a 8avos)','+1 pt'],
+           ['Equipo gana en 8avos (pasa a cuartos)','+1 pt'],['Equipo gana en cuartos (pasa a semis)','+1 pt'],
+           ['Equipo gana en semis (pasa a la final)','+1 pt'],
            ['4to puesto','+2 pts extra'],['3er puesto','+4 pts extra'],
            ['Subcampeón','+6 pts extra'],['Campeón 🏆','+10 pts extra'],
            ['Acertar goleador ⚽','+5 pts bonus']].map(([l,v])=>
@@ -900,6 +857,7 @@ function checkAdmin(name) {
     state.user = {name, isAdmin:true};
     hideOverlay();
     showPage('admin');
+    startAutoSync(); // inicia sync continuo al entrar como admin
     toast('✅ Acceso admin concedido');
   } else { toast('❌ Contraseña incorrecta'); }
 }
@@ -1024,6 +982,38 @@ window.showPollaDetail = id => {
   if (!p) return;
   const res = state.resultados;
   const ck = (actual, pred) => actual && pred && actual === pred ? '✅' : '';
+  // ¿Equipo clasificó a 16avos? (está en res.bracket.r32)
+  const qual = t => t && res?.bracket?.r32?.includes(t) ? ' ✅' : '';
+  // ¿Equipo ganó esa ronda? (está en res.bracket[round])
+  const wonR = (t, round) => t && res?.bracket?.[round]?.includes(t) ? ' ✅' : '';
+
+  // --- FASE DE GRUPOS: 12 grupos con 1°/2°/3° elegidos ---
+  const gruposHTML = Object.keys(GROUPS).sort().map(g => {
+    const pg = (p.grupos && p.grupos[g]) || {};
+    const isTerc = p.terceros && p.terceros.includes(g);
+    const row = (pos, team, extra='') =>
+      `<div style="font-size:12px;padding:2px 0">${pos} ${team ? fl(team) : '—'}${extra}</div>`;
+    return `<div class="group-card" style="padding:9px">
+      <div class="group-label" style="font-size:13px;margin-bottom:5px">Grupo ${g}</div>
+      ${row('<b style="color:var(--gold)">1°</b>', pg.p1, qual(pg.p1))}
+      ${row('<b style="color:#6060ee">2°</b>', pg.p2, qual(pg.p2))}
+      ${pg.p3 ? row('<b style="color:#886644">3°</b>', pg.p3, qual(pg.p3) + (isTerc?' <span class="tag ty" style="font-size:8px;padding:1px 4px">tercero</span>':'')) : ''}
+    </div>`;
+  }).join('');
+
+  // --- LLAVES: equipos elegidos para ganar cada ronda ---
+  const rounds = [['r32','16avos de Final'],['r16','8avos de Final'],['qf','Cuartos de Final'],['sf','Semifinal']];
+  const bracketHTML = rounds.map(([key,label]) => {
+    const picks = (p.bracket && p.bracket[key]) || [];
+    if (!picks.length) return '';
+    return `<div style="margin-bottom:10px">
+      <div class="muted" style="font-size:12px;font-weight:700;margin-bottom:5px">${label}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${picks.map(t=>`<span class="tag tm" style="font-size:11px">${fl(t)}${key==='r32'?(res?.bracket?.r32win?.includes(t)?' ✅':''):wonR(t,key)}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
   showOverlay(`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <h2>${p.userName}</h2>
@@ -1040,12 +1030,16 @@ window.showPollaDetail = id => {
     <div class="summary-row"><span class="muted">4to puesto</span><span style="font-weight:700">${p.fourth||'—'} ${ck(res?.fourth,p.fourth)}</span></div>
     <div class="summary-row"><span class="muted">Goleador ⚽</span><span style="font-weight:700">${p.topScorer||'—'} ${res?.topScorer&&p.topScorer&&res.topScorer.toLowerCase()===p.topScorer.toLowerCase()?'✅':''}</span></div>
     <div class="summary-row"><span class="muted"><strong>Puntos</strong></span><span class="gold" style="font-weight:900;font-size:18px">${p.points||0} pts</span></div>
-    ${p.terceros?.length ? `
+
+    <div class="divider"></div>
+    <div class="card-title" style="font-size:15px">⚽ Clasificación de Grupos elegida</div>
+    <div class="group-grid">${gruposHTML}</div>
+
+    ${bracketHTML ? `
       <div class="divider"></div>
-      <div class="muted" style="margin-bottom:6px">8 Mejores Terceros elegidos:</div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px">
-        ${p.terceros.map(g=>`<span class="tag tm">${p.grupos&&p.grupos[g]?.p3||'3°'+g}</span>`).join('')}
-      </div>` : ''}
+      <div class="card-title" style="font-size:15px">🔑 Llaves elegidas (ganadores por ronda)</div>
+      ${bracketHTML}` : ''}
+
     <button class="btn btn-outline" style="margin-top:14px" onclick="hideOverlay()">Cerrar</button>
   `);
 };
@@ -1531,14 +1525,14 @@ function renderAdmin() {
     <div class="card">
       <div class="card-title">🔄 Sincronización con el Mundial</div>
       <div class="alert info" style="font-size:13px;margin-bottom:10px">
-        Los resultados se obtienen automáticamente de <strong>API-Football</strong> cada 10 minutos
-        cuando esta página esté abierta. También puedes sincronizar manualmente.
+        Los resultados oficiales del Mundial 2026 se obtienen automáticamente cada 15 minutos
+        mientras esta página esté abierta. También puedes sincronizar manualmente.
         <br><br>
-        ⚠️ <strong>API-Football</strong> sincroniza resultados automáticamente (plan Free, 100 llamadas/día).
+        ✅ Fuente: <strong>football-data.org</strong> (datos reales del torneo, gratis).
       </div>
       <div id="apiStatus" style="font-size:13px;color:var(--muted);margin-bottom:10px;min-height:20px">Listo para sincronizar.</div>
       <button class="btn btn-blue" onclick="fetchWorldCupResults()">🔄 SINCRONIZAR RESULTADOS AHORA</button>
-      <button class="btn btn-green" style="margin-top:8px" onclick="startAutoSync()">▶ ACTIVAR SYNC AUTOMÁTICO (cada 10 min)</button>
+      <button class="btn btn-green" style="margin-top:8px" onclick="startAutoSync()">▶ ACTIVAR SYNC AUTOMÁTICO (cada 15 min)</button>
     </div>
 
     <!-- RESULTADOS MANUAL -->
