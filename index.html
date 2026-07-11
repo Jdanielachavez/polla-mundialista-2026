@@ -476,6 +476,24 @@ function refreshCurrentPage() {
 // desde football-data.org con CORS habilitado. El token va seguro en el servidor.
 const RESULTS_API_URL = 'https://polla-mundialista-2026-results.val.run/';
 
+// Los resultados de un torneo solo CRECEN: la unión protege las correcciones
+// manuales en Firebase cuando al bot le falta un partido (p.ej. un ganador de 8avos).
+function mergeResultados(current, incoming) {
+  const out = JSON.parse(JSON.stringify(incoming || {}));
+  if (!current) return out;
+  out.grupos = { ...(current.grupos || {}), ...(out.grupos || {}) };
+  const cb = current.bracket || {}, ib = out.bracket || {};
+  out.bracket = {};
+  for (const k of ['r32','r32win','r16','qf','sf']) {
+    const union = [...new Set([...(cb[k] || []), ...(ib[k] || [])])];
+    if (union.length) out.bracket[k] = union;
+  }
+  for (const k of ['champion','second','third','fourth','topScorer']) {
+    if (!out[k] && current[k]) out[k] = current[k];
+  }
+  return out;
+}
+
 async function fetchWorldCupResults() {
   const statusEl = document.getElementById('apiStatus');
   const setStatus = msg => { if(statusEl) statusEl.textContent = msg; };
@@ -484,9 +502,10 @@ async function fetchWorldCupResults() {
   try {
     const res = await fetch(RESULTS_API_URL, {cache:'no-store'});
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!data || data.error) throw new Error(data && data.error ? data.error : 'respuesta vacía');
+    const raw = await res.json();
+    if (!raw || raw.error) throw new Error(raw && raw.error ? raw.error : 'respuesta vacía');
 
+    const data = mergeResultados(state.resultados, raw);
     state.resultados = data;
     recalcAll(false); // recalcula los puntos localmente
 
