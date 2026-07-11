@@ -648,10 +648,15 @@ function showPage(name) {
 // ============================================================
 // NAV
 // ============================================================
+// Nombres iguales aunque cambien tildes, mayúsculas o espacios dobles:
+// "Anita Landázuri" ≡ "anita landazuri" ≡ "Anita  Landazuri"
+function nameKey(s) { return norm(s || '').replace(/\s+/g, ' '); }
+function sameUser(a, b) { return nameKey(a) === nameKey(b); }
+
 function userHasPaid() {
   if (!state.user) return false;
   if (state.user.isAdmin) return true;
-  return Object.values(state.pollas).some(p => p.userName === state.user.name && p.paid);
+  return Object.values(state.pollas).some(p => sameUser(p.userName, state.user.name) && p.paid);
 }
 
 function renderNav() {
@@ -801,7 +806,7 @@ window.submitCreateGroup = async () => {
 function renderHome() {
   const el = document.getElementById('pageHome');
   if (state.user) {
-    const mine = Object.values(state.pollas).filter(p => p.userName === state.user.name);
+    const mine = Object.values(state.pollas).filter(p => sameUser(p.userName, state.user.name));
     el.innerHTML = `
       <div class="card">
         <div class="card-title">¡Hola, ${state.user.name}! 👋</div>
@@ -869,12 +874,18 @@ function renderMineCards(mine) {
 }
 
 function doLogin() {
-  const name = (document.getElementById('nameInput')?.value||'').trim();
+  let name = (document.getElementById('nameInput')?.value||'').trim();
   if (!name) { toast('⚠️ Escribe tu nombre y apellido'); return; }
-  if (name !== GLOBAL_ADMIN && name.trim().split(/\s+/).length < 2) {
+  const isAdminName = sameUser(name, GLOBAL_ADMIN);
+  if (!isAdminName && name.split(/\s+/).length < 2) {
     toast('⚠️ Escribe tu nombre Y apellido (ej: María García)'); return;
   }
-  if (name === GLOBAL_ADMIN) {
+  // Si ya existe una polla con este nombre (aunque cambien tildes o
+  // mayúsculas), usar la escritura guardada para que todo coincida.
+  const existing = Object.values(state.pollas).find(p => sameUser(p.userName, name));
+  if (existing) name = existing.userName;
+  if (isAdminName) name = GLOBAL_ADMIN;
+  if (isAdminName) {
     showOverlay(`
       <h2>🔑 Acceso Admin</h2>
       <p class="muted" style="margin-bottom:10px">Hola Daniel, ingresa tu contraseña:</p>
@@ -1106,7 +1117,7 @@ function renderMias() {
   const el = document.getElementById('pageMias');
   if (!state.user) { el.innerHTML = '<div class="alert">Inicia sesión primero.</div>'; return; }
   const mine = Object.values(state.pollas)
-    .filter(p => p.userName === state.user.name)
+    .filter(p => sameUser(p.userName, state.user.name))
     .sort((a,b) => (a.pollaNr||0)-(b.pollaNr||0));
   const res = state.resultados;
   const ck = (a,b) => a&&b&&a===b?'✅':'';
@@ -1139,7 +1150,7 @@ function renderMias() {
 const STEPS = ['grupos','r32','r16','qf','sf','final','goleador'];
 
 function startDraft() {
-  const cnt = Object.values(state.pollas).filter(p => p.userName === state.user?.name).length;
+  const cnt = Object.values(state.pollas).filter(p => sameUser(p.userName, state.user?.name)).length;
   draft = {
     id: uid(), userName: state.user?.name, pollaNr: cnt+1,
     paid: false, grupos: {}, terceros: [],
